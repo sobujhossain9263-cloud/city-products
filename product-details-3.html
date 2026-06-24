@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>City Group — Production Tracker</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--surface:#181c27;--card:#1e2333;--border:#2a3045;
+  --accent:#4f8ef7;--accent2:#a78bfa;--green:#34d399;--red:#f87171;
+  --yellow:#fbbf24;--orange:#fb923c;--pink:#f472b6;
+  --text:#e8ecf4;--muted:#7b869e;--input:#252c3f;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+
+/* LOGIN */
+#loginPage{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 60% 20%,rgba(79,142,247,0.08),transparent 60%)}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px 32px;width:100%;max-width:380px}
+.login-logo{width:56px;height:56px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 18px}
+.login-title{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;text-align:center}
+.login-sub{color:var(--muted);font-size:0.8rem;text-align:center;margin:4px 0 28px}
+.flabel{font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;display:block}
+.finput{width:100%;background:var(--input);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:.9rem;padding:11px 13px;outline:none;transition:border-color .15s;margin-bottom:14px}
+.finput:focus{border-color:var(--accent)}
+.login-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:700;padding:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;margin-top:4px}
+.login-btn:hover{background:#3a7de8}
+.login-err{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:var(--red);border-radius:7px;padding:9px 13px;font-size:.8rem;margin-top:12px;text-align:center;display:none}
+
+/* APP */
+#appPage{display:none}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.hbrand{display:flex;align-items:center;gap:10px}
+.hlogo{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.htitle{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700}
+.hsub{font-size:.65rem;color:var(--muted)}
+.hright{display:flex;align-items:center;gap:8px}
+.rbadge{font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em}
+.rbadge.admin{background:rgba(251,191,36,.15);color:var(--yellow)}
+.rbadge.user{background:rgba(79,142,247,.15);color:var(--accent)}
+.logout-btn{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.2);border-radius:6px;padding:5px 12px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 20px;overflow-x:auto}
+.tab-btn{background:none;border:none;color:var(--muted);font-family:'Inter',sans-serif;font-size:.82rem;font-weight:500;padding:11px 14px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* MAIN */
+.main{padding:24px 20px;max-width:1000px;margin:0 auto}
+.page-title{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:4px}
+.page-desc{color:var(--muted);font-size:.82rem;margin-bottom:22px}
+
+/* LINE CARDS */
+.line-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:18px}
+.line-header{padding:13px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.line-dot{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;font-family:'Space Grotesk',sans-serif;flex-shrink:0}
+.dot-jelfy{background:rgba(79,142,247,.15);color:#4f8ef7}
+.dot-lollipop{background:rgba(244,114,182,.15);color:#f472b6}
+.dot-mold{background:rgba(52,211,153,.15);color:#34d399}
+.dot-hard{background:rgba(251,191,36,.15);color:#fbbf24}
+.dot-gum{background:rgba(251,146,60,.15);color:#fb923c}
+.line-title{font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:700}
+.line-sub{font-size:.68rem;color:var(--muted)}
+.line-body{padding:16px 18px}
+
+/* FLAVOR TABLE */
+.ftable{width:100%;border-collapse:collapse}
+.ftable thead th{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;padding:0 7px 8px;text-align:left;border-bottom:1px solid var(--border)}
+.ftable thead th:first-child{padding-left:0}
+.ftable tbody tr:not(:last-child) td{border-bottom:1px solid var(--border)}
+.ftable tbody td{padding:8px 7px;font-size:.82rem;vertical-align:middle}
+.ftable tbody td:first-child{padding-left:0;color:var(--muted);font-size:.7rem;width:26px}
+.ei{background:var(--input);border:1px solid transparent;border-radius:6px;color:var(--text);font-family:'Inter',sans-serif;font-size:.82rem;padding:6px 8px;outline:none;width:100%;transition:border-color .15s}
+.ei:focus{border-color:var(--accent)}
+.ei:disabled{background:transparent;cursor:default}
+.ei.nm{width:130px}
+.ei.num{width:75px;text-align:center}
+.usel{background:var(--input);border:1px solid transparent;border-radius:6px;color:var(--text);font-family:'Inter',sans-serif;font-size:.82rem;padding:6px 6px;outline:none;width:65px}
+.usel:disabled{background:transparent;cursor:default}
+.del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:3px 5px;border-radius:4px;transition:color .15s,background .15s}
+.del-btn:hover{color:var(--red);background:rgba(248,113,113,.1)}
+.add-row{background:none;border:1px dashed var(--border);border-radius:7px;color:var(--muted);cursor:pointer;font-size:.78rem;padding:7px 14px;margin-top:10px;width:100%;transition:color .15s,border-color .15s;font-family:'Inter',sans-serif}
+.add-row:hover{color:var(--accent);border-color:var(--accent)}
+.save-fab{position:fixed;bottom:22px;right:22px;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:12px 22px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 4px 20px rgba(79,142,247,.4);transition:background .2s}
+.save-fab:hover{background:#3a7de8}
+
+/* ADMIN */
+.admin-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px}
+.admin-title{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:14px}
+.utable{width:100%;border-collapse:collapse}
+.utable th{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;padding:0 7px 9px;text-align:left;border-bottom:1px solid var(--border)}
+.utable td{padding:8px 7px;font-size:.82rem;border-bottom:1px solid var(--border);vertical-align:middle}
+.utable tr:last-child td{border-bottom:none}
+.ui{background:var(--input);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'Inter',sans-serif;font-size:.8rem;padding:6px 8px;outline:none;width:100%;transition:border-color .15s}
+.ui:focus{border-color:var(--accent)}
+.add-user-btn{background:var(--accent);color:#fff;border:none;border-radius:7px;padding:9px 18px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;margin-top:12px}
+.save-users-btn{background:var(--green);color:#0f1117;border:none;border-radius:7px;padding:9px 18px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;margin-top:12px;margin-left:8px}
+.del-user{background:rgba(248,113,113,.1);color:var(--red);border:none;border-radius:5px;padding:4px 9px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+
+.toast{position:fixed;bottom:72px;right:22px;background:var(--green);color:#0f1117;font-weight:700;font-size:.8rem;padding:10px 18px;border-radius:9px;opacity:0;transform:translateY(10px);transition:opacity .3s,transform .3s;pointer-events:none;z-index:999}
+.toast.show{opacity:1;transform:translateY(0)}
+.hidden{display:none!important}
+
+@media(max-width:560px){.main{padding:16px 12px}.line-body{padding:12px}.header{padding:10px 12px}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage">
+  <div class="login-box">
+    <div class="login-logo">🍬</div>
+    <div class="login-title">City Group</div>
+    <div class="login-sub">Confectionary Division · Production Tracker</div>
+    <label class="flabel">User ID</label>
+    <input class="finput" id="lid" type="text" placeholder="Enter your ID" autocomplete="off">
+    <label class="flabel">Password</label>
+    <input class="finput" id="lpw" type="password" placeholder="Enter your password">
+    <button class="login-btn" onclick="doLogin()">Login →</button>
+    <div class="login-err" id="lerr">Invalid User ID or Password</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appPage">
+  <div class="header">
+    <div class="hbrand">
+      <div class="hlogo">🍬</div>
+      <div>
+        <div class="htitle">City Group</div>
+        <div class="hsub">Production Tracker</div>
+      </div>
+    </div>
+    <div class="hright">
+      <span class="rbadge" id="rbadge"></span>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('products',this)">📦 Products</button>
+    <button class="tab-btn hidden" id="adminTab" onclick="showTab('admin',this)">⚙️ Manage Users</button>
+  </div>
+
+  <!-- Products Tab -->
+  <div id="tabProducts" class="main">
+    <div class="page-title">Production Details</div>
+    <div class="page-desc" id="pdesc"></div>
+    <div id="linesGrid"></div>
+    <button class="save-fab hidden" id="saveFab" onclick="saveAll()">💾 Save</button>
+  </div>
+
+  <!-- Admin Tab -->
+  <div id="tabAdmin" class="main hidden">
+    <div class="page-title">Manage Users</div>
+    <div class="page-desc">Add or remove users. Save to apply changes.</div>
+    <div class="admin-card">
+      <div class="admin-title">👤 Admin Account</div>
+      <table class="utable">
+        <thead><tr><th>User ID</th><th>Password</th></tr></thead>
+        <tbody><tr>
+          <td><input class="ui" id="aId" type="text"></td>
+          <td><input class="ui" id="aPw" type="text"></td>
+        </tr></tbody>
+      </table>
+    </div>
+    <div class="admin-card">
+      <div class="admin-title">👥 Users <span style="color:var(--muted);font-size:.72rem;font-weight:400" id="ucnt"></span></div>
+      <table class="utable">
+        <thead><tr><th>#</th><th>User ID</th><th>Password</th><th></th></tr></thead>
+        <tbody id="utbody"></tbody>
+      </table>
+      <button class="add-user-btn" onclick="addUser()">+ Add User</button>
+      <button class="save-users-btn" onclick="saveUsers()">✓ Save All</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== CONFIG =====
+const LINES = [
+  {id:'jelfy',    name:'Jelfy Line',    dot:'JL', cls:'dot-jelfy'},
+  {id:'lollipop', name:'Lollipop Line', dot:'LP', cls:'dot-lollipop'},
+  {id:'mold',     name:'Mold Line',     dot:'ML', cls:'dot-mold'},
+  {id:'hard',     name:'Hard Candy',    dot:'HC', cls:'dot-hard'},
+  {id:'gum',      name:'Gum Line',      dot:'GM', cls:'dot-gum'},
+];
+const UNITS = ['g','kg','mm','cm','inch'];
+const DEF_ADMIN = {id:'admin',pw:'sobuj7097'};
+const DEF_USERS = [
+  {id:'sobuj7097',pw:'sobuj16185'},
+];
+
+// ===== STORAGE =====
+const LS = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
+const SS = (k,v) => localStorage.setItem(k,JSON.stringify(v));
+
+let admin   = LS('cg_admin') || DEF_ADMIN;
+let users   = LS('cg_users') || DEF_USERS;
+let data    = LS('cg_data')  || {};
+let role    = null;
+
+LINES.forEach(l => { if(!data[l.id]) data[l.id]=[{flavor:'',candyWt:'',candyU:'g',pktLen:'',pktLenU:'mm',pktWid:'',pktWidU:'mm',batchKg:''}]; });
+
+// ===== LOGIN =====
+function doLogin(){
+  const id=document.getElementById('lid').value.trim();
+  const pw=document.getElementById('lpw').value;
+  admin=LS('cg_admin')||DEF_ADMIN;
+  users=LS('cg_users')||DEF_USERS;
+  if(id===admin.id&&pw===admin.pw){role='admin';enterApp();}
+  else{const u=(users||[]).find(u=>u.id===id&&u.pw===pw);if(u){role='user';enterApp();}else{document.getElementById('lerr').style.display='block';}}
+}
+document.getElementById('lid').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('lpw').focus();});
+document.getElementById('lpw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+function enterApp(){
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('appPage').style.display='block';
+  document.getElementById('lerr').style.display='none';
+  document.getElementById('lid').value='';
+  document.getElementById('lpw').value='';
+  const isAdmin=role==='admin';
+  document.getElementById('rbadge').textContent=isAdmin?'Admin':'User';
+  document.getElementById('rbadge').className='rbadge '+(isAdmin?'admin':'user');
+  document.getElementById('adminTab').classList.toggle('hidden',!isAdmin);
+  document.getElementById('saveFab').classList.toggle('hidden',!isAdmin);
+  document.getElementById('pdesc').textContent=isAdmin?'Edit flavor names and production details for each line.':'View production details below.';
+  data=LS('cg_data')||data;
+  renderLines();
+  showTab('products',document.querySelector('.tab-btn'));
+}
+
+function doLogout(){role=null;document.getElementById('appPage').style.display='none';document.getElementById('loginPage').style.display='flex';}
+
+// ===== TABS =====
+function showTab(tab,btn){
+  document.getElementById('tabProducts').classList.toggle('hidden',tab!=='products');
+  document.getElementById('tabAdmin').classList.toggle('hidden',tab!=='admin');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  if(tab==='admin')renderAdmin();
+}
+
+// ===== LINES =====
+function renderLines(){
+  const grid=document.getElementById('linesGrid');
+  grid.innerHTML='';
+  const isAdmin=role==='admin';
+  LINES.forEach(l=>{
+    const rows=data[l.id]||[];
+    const card=document.createElement('div');
+    card.className='line-card';
+    const rowsHtml=rows.map((r,i)=>`
+      <tr>
+        <td>${i+1}</td>
+        <td><input class="ei nm" data-l="${l.id}" data-i="${i}" data-f="flavor" value="${esc(r.flavor)}" placeholder="Flavor name" ${isAdmin?'':'disabled'}></td>
+        <td>
+          <div style="display:flex;gap:4px;align-items:center">
+            <input class="ei num" data-l="${l.id}" data-i="${i}" data-f="candyWt" type="number" value="${esc(r.candyWt)}" placeholder="0" ${isAdmin?'':'disabled'}>
+            <select class="usel" data-l="${l.id}" data-i="${i}" data-f="candyU" ${isAdmin?'':'disabled'}>
+              ${UNITS.map(u=>`<option ${r.candyU===u?'selected':''}>${u}</option>`).join('')}
+            </select>
+          </div>
+        </td>
+        <td>
+          <div style="display:flex;gap:4px;align-items:center">
+            <input class="ei num" data-l="${l.id}" data-i="${i}" data-f="pktLen" type="number" value="${esc(r.pktLen)}" placeholder="0" ${isAdmin?'':'disabled'}>
+            <select class="usel" data-l="${l.id}" data-i="${i}" data-f="pktLenU" ${isAdmin?'':'disabled'}>
+              ${UNITS.map(u=>`<option ${r.pktLenU===u?'selected':''}>${u}</option>`).join('')}
+            </select>
+          </div>
+        </td>
+        <td>
+          <div style="display:flex;gap:4px;align-items:center">
+            <input class="ei num" data-l="${l.id}" data-i="${i}" data-f="pktWid" type="number" value="${esc(r.pktWid)}" placeholder="0" ${isAdmin?'':'disabled'}>
+            <select class="usel" data-l="${l.id}" data-i="${i}" data-f="pktWidU" ${isAdmin?'':'disabled'}>
+              ${UNITS.map(u=>`<option ${r.pktWidU===u?'selected':''}>${u}</option>`).join('')}
+            </select>
+          </div>
+        </td>
+        <td><input class="ei num" data-l="${l.id}" data-i="${i}" data-f="batchKg" type="number" value="${esc(r.batchKg)}" placeholder="0" style="width:80px" ${isAdmin?'':'disabled'}> kg</td>
+        ${isAdmin?`<td><button class="del-btn" onclick="delRow('${l.id}',${i})">✕</button></td>`:'<td></td>'}
+      </tr>`).join('');
+    card.innerHTML=`
+      <div class="line-header">
+        <div class="line-dot ${l.cls}">${l.dot}</div>
+        <div><div class="line-title">${l.name}</div><div class="line-sub">${rows.length} flavor${rows.length!==1?'s':''}</div></div>
+      </div>
+      <div class="line-body">
+        <table class="ftable">
+          <thead><tr>
+            <th>#</th><th>Flavor Name</th><th>Candy Weight</th>
+            <th>Pkt Length</th><th>Pkt Width</th><th>Batch (kg)</th><th></th>
+          </tr></thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+        ${isAdmin?`<button class="add-row" onclick="addRow('${l.id}')">+ Add Flavor</button>`:''}
+      </div>`;
+    grid.appendChild(card);
+  });
+  // bindings
+  grid.querySelectorAll('.ei').forEach(el=>el.addEventListener('input',()=>{ data[el.dataset.l][+el.dataset.i][el.dataset.f]=el.value; }));
+  grid.querySelectorAll('.usel').forEach(el=>el.addEventListener('change',()=>{ data[el.dataset.l][+el.dataset.i][el.dataset.f]=el.value; }));
+}
+
+function addRow(lid){ data[lid].push({flavor:'',candyWt:'',candyU:'g',pktLen:'',pktLenU:'mm',pktWid:'',pktWidU:'mm',batchKg:''}); renderLines(); }
+function delRow(lid,i){ if(data[lid].length<=1){data[lid][0]={flavor:'',candyWt:'',candyU:'g',pktLen:'',pktLenU:'mm',pktWid:'',pktWidU:'mm',batchKg:''};}else data[lid].splice(i,1); renderLines(); }
+function saveAll(){ SS('cg_data',data); showToast('✓ Saved!'); }
+
+// ===== ADMIN =====
+function renderAdmin(){
+  admin=LS('cg_admin')||DEF_ADMIN;
+  users=LS('cg_users')||DEF_USERS;
+  document.getElementById('aId').value=admin.id;
+  document.getElementById('aPw').value=admin.pw;
+  renderUTable();
+}
+function renderUTable(){
+  document.getElementById('ucnt').textContent=`(${users.length}/20)`;
+  document.getElementById('utbody').innerHTML=users.map((u,i)=>`
+    <tr>
+      <td style="color:var(--muted);width:28px">${i+1}</td>
+      <td><input class="ui" value="${esc(u.id)}" onchange="users[${i}].id=this.value" placeholder="User ID"></td>
+      <td><input class="ui" value="${esc(u.pw)}" onchange="users[${i}].pw=this.value" placeholder="Password"></td>
+      <td><button class="del-user" onclick="delUser(${i})">Remove</button></td>
+    </tr>`).join('');
+}
+function addUser(){ if(users.length>=20){showToast('Maximum 20 users!');return;} users.push({id:'',pw:''}); renderUTable(); }
+function delUser(i){ users.splice(i,1); renderUTable(); }
+function saveUsers(){
+  const newAdmin={id:document.getElementById('aId').value.trim(),pw:document.getElementById('aPw').value};
+  if(!newAdmin.id||!newAdmin.pw){showToast('Admin ID/Password cannot be empty!');return;}
+  const rows=document.querySelectorAll('#utbody tr');
+  users=Array.from(rows).map((_,i)=>{
+    const ins=document.querySelectorAll(`#utbody tr:nth-child(${i+1}) .ui`);
+    return{id:ins[0]?.value.trim()||'',pw:ins[1]?.value||''};
+  }).filter(u=>u.id);
+  SS('cg_admin',newAdmin); SS('cg_users',users);
+  admin=newAdmin;
+  showToast('✓ Users saved!');
+  renderUTable();
+}
+
+function esc(v){return(v||'').toString().replace(/"/g,'&quot;')}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+</script>
+</body>
+</html>
